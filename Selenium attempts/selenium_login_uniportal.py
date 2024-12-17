@@ -20,8 +20,8 @@ Author: Heini Järviö
 
 # Login credentials (manuel input)
 
-username = "benjamin.schibli@sunrise.ch"
-password = "S_benjamin_99"
+username = 
+password = 
 
 # initialize the Selenium Firefox driver
 driver = webdriver.Chrome()
