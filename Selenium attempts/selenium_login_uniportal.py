@@ -5,8 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import numpy as np
 import time
-import os 
-
+import os
 
 
 """
@@ -15,13 +14,18 @@ an authenticator code. (The the step of adding the authenticator can is not ness
 usere saved the option that the authentifivation code has to be asked just once a period of time.)
 
 Author: Heini Järviö
+Coauhtor: Benjamin Schibli
 
 """
 
 # Login credentials (manuel input)
 
-username = "a"
-password = "a"
+# username = ""
+# password = ""
+
+# Login credentials (from credentials.py)
+
+from credentials import username, password
 
 # initialize the Selenium Firefox driver
 driver = webdriver.Chrome()
@@ -68,13 +72,15 @@ driver.find_element(By.ID, "button-proceed").click()
 
 # Adding a wait to allow the page to load.$
 
-driver.implicitly_wait(40) # changed 
+driver.implicitly_wait(40)  # changed
 
 # Click on print_all
 
 xpath = "//*[contains(@class, 'button-big')]"
 
-print_all = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.XPATH, xpath)))
+print_all = WebDriverWait(driver, 15).until(
+    EC.presence_of_element_located((By.XPATH, xpath))
+)
 
 driver.execute_script("arguments[0].scrollIntoView();", print_all)
 
@@ -82,7 +88,7 @@ print_all.click()
 
 # downloade HTML
 
-time.sleep(10) 
+time.sleep(10)
 
 html_content = driver.page_source
 
@@ -103,8 +109,8 @@ print(f"HTML page saved successfully at {file_path}")
 
 # Adding click: Details anzeigen to load the full page  (Was the first attemp didn't work)
 # (in the german version there is always vorlesungView_showDetailsLink' in the xpath has to be checked in the english version)
- 
-'''
+
+"""
 There where no informations found on https://portal.unilu.ch/robots.txt so I assumed that it is allowed to scrape the page.
 
 Got the error ('Connection aborted.', ConnectionResetError(10054, 'Eine vorhandene 
@@ -162,4 +168,4 @@ except Exception as e:
     print(f"Unexpected error: {e}")
 finally:
     driver.quit()
-'''
+"""
