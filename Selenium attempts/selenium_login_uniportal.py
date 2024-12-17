@@ -20,8 +20,8 @@ Author: Heini Järviö
 
 # Login credentials (manuel input)
 
-username = 
-password = 
+username = "a"
+password = "a"
 
 # initialize the Selenium Firefox driver
 driver = webdriver.Chrome()
