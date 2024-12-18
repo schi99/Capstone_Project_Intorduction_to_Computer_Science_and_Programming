@@ -17,15 +17,13 @@ Author: Heini Järviö
 """
 
 # path to Firefox installation
-firefox_binary_path = pathlib.Path(
-    "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe"
-)
+firefox_binary_path = pathlib.Path(r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs")
 
 # Path to your Firefox profile in the existing browser
-firefox_profile_path = pathlib.Path("profile path here")  # add profile path
+firefox_profile_path = pathlib.Path(r"C:\Users\Benjamin Schibli\AppData\Roaming\Mozilla\Firefox\Profiles\3fgbirfp.default-release")  # add profile path
 
 # Path to geckodriver
-geckodriver_path = pathlib.Path("geckodriver path here")
+geckodriver_path = pathlib.Path(r"C:\Users\Benjamin Schibli\Downloads\geckodriver-v0.35.0-win32.zip")
 
 # Setting up Firefox options to use the existing profile
 options = webdriver.FirefoxOptions()

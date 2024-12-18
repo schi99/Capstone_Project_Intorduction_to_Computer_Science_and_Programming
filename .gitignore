@@ -1,4 +1,13 @@
-# Byte-compiled / optimized / DLL files
+# Adding usernamen and password 
+
+credentials.py
+
+# Adding HTML (of the Website)
+
+scraped_page.html
+
+#
+Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
