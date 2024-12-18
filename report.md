@@ -19,6 +19,8 @@
 - Describe your methodology and problem-solving strategies
 - Clearly state what you developed and how (implementation)
 
+*Uniportal offers a "print all" possibility on the 'Courses' (or 'Lehrveranstaltungen') page, that allowed us to access all course data on one page. This data was then saved as an html-file for further use. Beautifulsoup package was used to parse this data into a meaningful dataframe. The parser makes a list of the data that was then modified to a dictionary object, as this was deemed more useful for the next steps of the project.*
+
 ### 3.1. Design details
 
 -  Describe pre-existing resources and their origins
@@ -32,11 +34,12 @@
 
 - Explain what worked and what did not
 
-    *The original plan was to automate the login process to UniPortal to allow a smooth process for the webscraping and calendar output creation. Attempts to create this feature were made using Selenium browser automation. However, due to the two-factor-login, this feature was deemed quite impractical, as the user would have to provide authenticator code each time they wanted to use the feature, which would make the automation pointless.*
+    *The original plan was to automate the login process to UniPortal to allow a smooth process for the webscraping and calendar output creation. Attempts to create this feature were made using Selenium browser automation. The results were inconclusive, as the automated login worked for only one of us - for the other, providing an authentication code could not be avoided and thus the login was not automatic. While requiring a two-factor-login this feature was deemed quite impractical, as the user would have to provide authenticator code each time they wanted to use the feature, which would make the automation pointless.*
 
-    *To go around this issue, the next attempt  was to create a Selenium browser automation that could access a pre-existing browser window, where user had already completed the log-in process to UniPortal and subsequently automate the remaining steps. The reasoning for this step was that accessing an existing window would utilise saved cookies, therefore avoiding the problem of the two-factor authentication. The process involved use the browser's (Firefox) profiles-functionality and installation of the geckodriver. However, this attempt, too, was unsuccesful.* 
+    *To go around this issue,  we also attempted to create a Selenium browser automation that could access a pre-existing browser window, where user had already completed the log-in process to UniPortal and subsequently automate the remaining steps. The reasoning for this step was that accessing an existing window would utilise saved cookies, therefore avoiding the problem of the two-factor authentication. The process involved use the browser's (Firefox) profiles-functionality and installation of the geckodriver. However, this attempt, too, was unsuccesful. The github repository includes a python file that shows an attempt at this.* 
     
-    *As these attempts to create the login automation had already involved multiple instances trying out variations of the code, reading documentation online and hours of work, this feature was deemed to be beoynd the scope of the project and inessential for the main goal of the project. Thus, a revision was made to download the course information directly from UniPortal as a HTML document and implement the remaining steps from there.*
+    *As the login automation did not work for both of us despite extensive attempts, this part was deemed beyond the scope of this project and inessential for the main goal of the project. Thus, a revision was made to download the course information directly from UniPortal as a HTML document and implement the remaining steps from there.*
+
 - Include relevant data, such as graphs, equations, or images, to illustrate results
 
 ## 4. Conclusion
