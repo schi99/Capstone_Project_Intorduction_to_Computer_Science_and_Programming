@@ -1,6 +1,6 @@
 import icalendar
 import dataclasses
-import datetime
+from datetime import datetime
 from dateutil.parser import parse
 import os
 import pickle
@@ -53,7 +53,8 @@ class Lesson:
     room: str
     day_of_week: str
     date: datetime.date
-    time: str
+    start_time: datetime.time
+    end_time: datetime.time
 
 
 # Making a loop to go through the course information list to label different elements
@@ -71,16 +72,20 @@ for i in range(len(course_schedule_split) // 3):
     if " " in course_schedule_split[j]:
         room, day_of_week = course_schedule_split[j].rsplit(" ", maxsplit=1)
     # Date is placed on the second index
-    date = course_schedule_split[j + 1]
+    date = parse(course_schedule_split[j + 1])
     # Time is placed on the third index; we remove "Uhr" as this is not relevant
-    time = course_schedule_split[j + 2].replace(" Uhr", "")
+    course_schedule_split[j + 2] = course_schedule_split[j + 2].replace(" Uhr", "")
+    start_time, end_time = course_schedule_split[j + 2].split(" - ")
+    start_time = datetime.combine(date, (datetime.strptime(start_time, "%H:%M").time()))
+    end_time = datetime.combine(date, (datetime.strptime(end_time, "%H:%M").time()))
     # Appending the lesson information together to create the separate lessons
     lessons.append(
         Lesson(
             room=room,
             day_of_week=day_of_week,
-            date=parse(date),  # Parsing the date to a useful format using the parser
-            time=time,
+            date=date,  # Parsing the date to a useful format using the parser
+            start_time=start_time,
+            end_time=end_time,
         )
     )
 
