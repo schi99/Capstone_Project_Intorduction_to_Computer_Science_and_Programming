@@ -63,18 +63,10 @@ def read_html_with_beautiful_soup(file_path):
     return dicts
 
 
-# Read HTML file using BeautifulSoup with read_html()
-tables = read_html_with_beautiful_soup(html_file_path)
-
-
 # Saving our dictionary of tables using pickle
 def save_tables(filename, tables):
     with open(filename, "wb") as file:
         pickle.dump(tables, file)
-
-
-# Defining the file name and location in the data-folder
-save_tables(os.path.join(__location__, "data/my-tables.pkl"), tables)
 
 
 # A function to load our data again; testing that it was stored correctly
@@ -83,7 +75,22 @@ def load_tables(filename):
         return pickle.load(file)
 
 
-loaded_tables = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
+# We add this part so that the whole code is not run when we import a function to another script
 
-# Displaying the loaded dataframe
-print(loaded_tables)
+if __name__ == "__main__":
+    # Read HTML file using BeautifulSoup with read_html()
+    tables = read_html_with_beautiful_soup(html_file_path)
+
+    # Defining the file name and location in the data-folder
+    save_tables(os.path.join(__location__, "data/my-tables.pkl"), tables)
+
+    loaded_tables = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
+
+    # Displaying the loaded dataframe
+    print(loaded_tables)
+
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    file_path = os.path.join(__location__, "data/my-tables.pkl")
+    print(os.path.exists(file_path))
