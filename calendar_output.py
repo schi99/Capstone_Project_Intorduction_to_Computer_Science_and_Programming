@@ -1,11 +1,11 @@
 import icalendar
 import dataclasses
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from dateutil.parser import parse
 import os
 import pprint
 from reading_html import load_tables
-import tempfile
+import uuid
 
 """
 This code loads the parsed course data and extracts the information needed for 
@@ -26,28 +26,9 @@ course_info = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
 
 # Using one of the courses to create a template for parsing the information for calendar output
 course1 = course_info[0]
+
 # Testing that it worked
-
 # pprint.pprint(course1)
-
-# Extracting the information we need for the calendar output
-course_name = course1["Titel"]
-course_teacher = course1["Dozent/in"]
-course_schedule = course1["Termine"]
-
-# Testing it worked
-
-# print(course_name)
-# print(course_teacher)
-# print(course_schedule)
-
-# Special case if a course is weekly and only has information on the first lesson
-# Removing the "wöchentlich" and adding to the the course name for user's information
-# Removing "ab" as this breaks the code
-weekly = "wöchentlich"
-if weekly in course_schedule:
-    course_schedule = course_schedule.replace(" ab ", "").replace(weekly, "")
-    course_name += " (" + weekly + ")"
 
 
 # Using dataclasses to label different elements in the course information
@@ -61,21 +42,26 @@ class Lesson:
     end_time: datetime.time
 
 
+CET = timezone(timedelta(hours=1))
+
+
 # Function to create the calendar element
 def create_event(lesson):
     event = icalendar.Event()
     event.add("summary", lesson.name)
     event.add("dtstart", datetime.combine(lesson.date, lesson.start_time))
     event.add("dtend", datetime.combine(lesson.date, lesson.end_time))
-    event["location"] = icalendar.vText(lesson.room)
+    event.add("dtstamp", datetime.now(CET))
+    event.add("uid", str(uuid.uuid4()))
+    # event["location"] = icalendar.vText(lesson.room)
 
     return event
 
 
 def create_lessons(name, course_schedule):
-    cal = icalendar.Calendar()
+    # Creating an empty list for the lessons to loop over
+    lessons = []
     """This function turns a course schedule into a list of lessons."""
-
     # Separating the different elements in the schedule into a list
     course_schedule_split = course_schedule.split(sep=",")
     # Removing blanks to clean the element
@@ -108,20 +94,43 @@ def create_lessons(name, course_schedule):
             start_time=start_time,
             end_time=end_time,
         )
-        # Creating a calendar event of a lesson
-        ev = create_event(lesson)
-        # Adding it to the calendar
-        cal.add_component(ev)
+        # Adding to the list of lessons
+        lessons.append(lesson)
 
-    return cal
+    return lessons
 
 
-lessons = create_lessons(name=course_name, course_schedule=course_schedule)
+def create_calendar(course_info):
+    # Initialising the calendar
+    calendar_complete = icalendar.Calendar()
+    calendar_complete.add("prodid", "-//UniCal//mxm.dk//")
+    calendar_complete.add("version", "2.0")
+    for i in range(len(course_info)):
+        # Extracting the information we need for the calendar output
+        course_name = course_info[i].get("Titel", "not found")
+        course_schedule = course_info[i].get("Termine", "not found")
+        # Special case if a course is weekly and only has information on the first lesson
+        # Removing the "wöchentlich" and adding to the the course name for user's information
+        # Removing "ab" as this breaks the code
+        weekly = "wöchentlich"
+        if weekly in course_schedule:
+            course_schedule = course_schedule.replace(" ab ", "").replace(weekly, "")
+            course_name += " (" + weekly + ")"
+        schedule = create_lessons(course_name, course_schedule)
+        for lesson in schedule:
+            event = create_event(lesson)
+            calendar_complete.add_component(event)
+
+    return calendar_complete
+
+
+lessons = create_calendar(course_info)
 # Test on one of the cases that all events were created
 # assert len(lessons.events) == 4
-print(lessons)
+# print(lessons)
+
 
 # Saving the calendar file
-f = open(os.path.join(__location__, "data/example.ics"), "wb")
+f = open(os.path.join(__location__, "data/unical.ics"), "wb")
 f.write(lessons.to_ical())
 f.close()
