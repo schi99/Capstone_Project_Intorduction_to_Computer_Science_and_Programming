@@ -10,15 +10,14 @@ import os
 
 """
 This code provides a Selenium-powered login automation to UniPortal until the step of adding 
-an authenticator code. (The the step of adding the authenticator can is not nessecary if the 
-usere saved the option that the authentifivation code has to be asked just once a period of time.)
+an authenticator code. (The step of adding the authenticator code is not nessecary if the 
+user has saved the option that the authenticator should not be requested for a period of time.)
 
-Author: Heini Järviö
-Coauhtor: Benjamin Schibli
+Authors: Heini Järviö & Benjamin Schibli
 
 """
 
-# Login credentials (manuel input)
+# Login credentials (manual input)
 
 # username = ""
 # password = ""
@@ -99,7 +98,7 @@ folder_path = os.path.join(project_root, folder_name)
 os.makedirs(folder_path, exist_ok=True)  # Create the folder if it doesn't exist
 
 # Save the HTML file in the folder
-file_name = "scraped_page.html"
+file_name = "uniportal.html"
 file_path = os.path.join(folder_path, file_name)
 with open(file_path, "w", encoding="utf-8") as file:
     file.write(html_content)
