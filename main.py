@@ -1,22 +1,27 @@
-from reading_html import (
-    table_to_dict,
-    read_html_with_beautiful_soup,
-    save_tables,
-    load_tables,
-)
-from calendar_output import create_event, create_lessons, create_calendar, save_calendar
+from reading_html import read_html_with_beautiful_soup, save_tables
+from calendar_output import create_calendar, save_calendar
 import os
 
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+"""
+This code loads the downloaded HTML file, parses the data and
+creates a .ics file of the course information for the user to access with thei calendar application.
 
-html_file_path = os.path.join(__location__, "data/scraped_page.htm")
+Author: Heini Järviö
+"""
 
-tables = read_html_with_beautiful_soup(html_file_path)
+if __name__ == "__main__":
 
-save_tables(os.path.join(__location__, "data/my-tables.pkl"), tables)
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
 
-course_info = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
+    html_file_path = os.path.join(__location__, "data/scraped_page.htm")
 
-lessons = create_calendar(course_info)
+    course_info = read_html_with_beautiful_soup(html_file_path)
 
-save_calendar(lessons, os.path.join(__location__, "data/unical.ics"))
+    # Saving the tables for later use
+    save_tables(os.path.join(__location__, "data/my-tables.pkl"), course_info)
+
+    lessons = create_calendar(course_info)
+
+    save_calendar(lessons, os.path.join(__location__, "data/unical.ics"))
