@@ -53,7 +53,10 @@ def create_event(lesson):
     event.add("dtend", datetime.combine(lesson.date, lesson.end_time))
     event.add("dtstamp", datetime.now(CET))
     event.add("uid", str(uuid.uuid4()))
-    # event["location"] = icalendar.vText(lesson.room)
+    event["location"] = icalendar.vText(lesson.room)
+    # Recurring events for weekly courses: a semester lasts 14 weeks
+    if "wöchentlich" in lesson.name.lower():
+        event.add("rrule", icalendar.vRecur(freq="weekly", count=14))
 
     return event
 
@@ -113,7 +116,7 @@ def create_calendar(course_info):
         # Removing the "wöchentlich" and adding to the the course name for user's information
         # Removing "ab" as this breaks the code
         weekly = "wöchentlich"
-        if weekly in course_schedule:
+        if weekly in course_schedule.lower():
             course_schedule = course_schedule.replace(" ab ", "").replace(weekly, "")
             course_name += " (" + weekly + ")"
         schedule = create_lessons(course_name, course_schedule)
