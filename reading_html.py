@@ -21,7 +21,7 @@ Author: Heini Järviö
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 # File path to the stored html file
-html_file_path = os.path.join(__location__, "data/scraped_page.htm")
+html_file_path = os.path.join(__location__, "data/uniportal.htm")
 
 # A function that is used to create a dictionary of a table in the data by combining
 # the information from first index of the list with information from the second index

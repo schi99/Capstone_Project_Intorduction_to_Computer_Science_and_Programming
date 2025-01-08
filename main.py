@@ -15,7 +15,7 @@ if __name__ == "__main__":
         os.path.join(os.getcwd(), os.path.dirname(__file__))
     )
 
-    html_file_path = os.path.join(__location__, "data/scraped_page.htm")
+    html_file_path = os.path.join(__location__, "data/uniportal.htm")
 
     course_info = read_html_with_beautiful_soup(html_file_path)
 
