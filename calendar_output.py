@@ -134,6 +134,10 @@ lessons = create_calendar(course_info)
 
 
 # Saving the calendar file
-f = open(os.path.join(__location__, "data/unical.ics"), "wb")
-f.write(lessons.to_ical())
-f.close()
+def save_calendar(lessons, filename):
+    f = open(os.path.join(filename), "wb")
+    f.write(lessons.to_ical())
+    f.close()
+
+
+save_calendar(lessons, os.path.join(__location__, "data/unical.ics"))
