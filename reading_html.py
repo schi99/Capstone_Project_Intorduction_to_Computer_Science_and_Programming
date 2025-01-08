@@ -2,6 +2,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import os
 import pickle
+from io import StringIO
 
 """
 This code reads the previously stored "scraped_page" html-file 
@@ -20,7 +21,7 @@ Author: Heini Järviö
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 # File path to the stored html file
-html_file_path = os.path.join(__location__, "data/scraped_page.htm")
+html_file_path = os.path.join(__location__, "data/uniportal.htm")
 
 # A function that is used to create a dictionary of a table in the data by combining
 # the information from first index of the list with information from the second index
@@ -43,8 +44,11 @@ def read_html_with_beautiful_soup(file_path):
         soup = BeautifulSoup(f, "html.parser")
     # Find all tables in the HTML
     tables = soup.find_all("table")
+    # Convert the tables to a string and wrap it in a StringIO object
+    tables_str = str(tables)
+    tables_io = StringIO(tables_str)
     # Read tables into DataFrame using read_html()
-    dfs = pd.read_html(str(tables))
+    dfs = pd.read_html(tables_io)
 
     # df.shape gives us the number of [rows, columns] in the dataframe.
     # We check all of the dataframes in dfs and only keep the ones that
