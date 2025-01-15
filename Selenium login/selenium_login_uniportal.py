@@ -85,14 +85,14 @@ driver.execute_script("arguments[0].scrollIntoView();", print_all)
 
 print_all.click()
 
-# downloade HTML
+# download HTML
 
 time.sleep(10)
 
 html_content = driver.page_source
 
 # Define the folder name and ensure it exists
-folder_name = "scraped_pages"
+folder_name = "data"
 project_root = os.getcwd()  # This gets the current working directory
 folder_path = os.path.join(project_root, folder_name)
 os.makedirs(folder_path, exist_ok=True)  # Create the folder if it doesn't exist
