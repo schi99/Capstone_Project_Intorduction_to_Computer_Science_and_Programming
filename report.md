@@ -30,7 +30,7 @@ The initial plan for the project consisted of four sub-tasks:
  3. Parsing the scraped information to a more usable form
  4. Using the parsed information, creating a .ics file of the course timetable
 
- Additionally, we a had an optional goal of using LLM integration to create calendar events for important assignment deadlines based on information available at Uniportal. However, this goal was abandoned fairly early on in the project due to time constraints. 
+ Throughout the coding process, breakpoints and printing were used to troubleshoot for sources of errors. 
 
  The implementation process was as follows:
 
@@ -58,13 +58,13 @@ Finally, the newly created list of dictionaries was saved using the pickle modul
 
  4. Using the parsed information, creating a .ics file of the course timetable (spesific file: calendar_output.py)
 
- For the final step in the project, date and calendar related modules as well as the dataclasses module were used. To successfully create a calendar file, three functions were necessary. 
+ For the final step, date and calendar related modules as well as the dataclasses module were used. To start, a parsing code and calendar output were created for the first course in the dictionary as a test element. When this was succesful, the code was generalised to work for all the courses in the dictionary. In the end, three functions were necessary for creation of the calendar output.
 
 To create the planned calendar output, it was necessary to identify four elements for each class of each course: the date, start time, end time and the room. Additionally, each calendar event should include the name of the course. For easier sorting, we used the dataclasses module to identify these elements in one course.
 
 The implementation has three key functions: 1. creating the separate course events from one course, 2. creating an icalendar compatible object of the course events and 3. lastly, to combine all events to one calendar. In 1. we looped over all events of one course. In 2. the the events were formated using the icalendar module to comply with the .ics file requirements and in 3. we looped over all courses and applied the earlier steps to form a complete calendar. 
 
-Identifying the different time elements and the room from the course schedule posed greatest challenges. This was because this information was all given on set of rows with differing separators (e.g. "Tue, 4.12., 8.00-16.00, B3.456"). Splitting with commas to separate elements (day of week, date, time, room) led to suitable results for the date and time information, but problems arose for identifying the room number, as this was separated from the next line only with a blank. For this reason, the current solution does not add room number for the first event of a course. Starting and ending time for one event were created by splitting the said element and transformed using the datetime module, combined with the date. Lastly, all information was organised using the dataclasses. 
+Identifying the different time artefacts and the room from the course schedule posed greatest challenges. This was because this information was all given on set of rows with differing separators (e.g. "Tue, 4.12., 8.00-16.00, B3.456"). Splitting with commas to separate elements (day of week, date, time, room) led to suitable results for the date and time information, but problems arose for identifying the room number, as this was separated from the next line only with a blank. For this reason, an additional loop was added to split day of the week and room to two elements, thus creating a list of the course information where one course has a lenght of four. 
 
 Additional challenge came from courses that would occur weekly, with only one announced course time (from a specific date). For these courses we needed to remove the "ab" or "from" from the schedule and establish a recurrence. A proximal solution was found by repeating the event 14 times, as this is the length of a semester in Switzerland. This solution was seen as sufficient although not entirely accurate, as it may ran into conflict with holidays. Finally, the compelete calendar was saved as .ics file and main.py was created to combine all necessary functions to one file for easier use. 
 
@@ -79,16 +79,23 @@ Additional challenge came from courses that would occur weekly, with only one an
 - Describe pre-existing resources and their origins
 - Highlight additions or modifications made during the project
 
-    *The original plan for this program was to provide a code that would automate the login, leading to the webscraping and calendar output creation process. However, multiple attempts revealed that this part was beyond the scope of this project due to issues related to two-factor-authentication and browser specifications. Thus, the goal was updated to include the remaining steps implemented on a HTML-document saved directly from UniPortal.*
+As this was the first attempt at creating a calendar file from Uniportal's course information, our approach was novel and rather than following an existing blueprint, it combined advice from versatile resources. Thus unsurprisingly, some modifications were made during the process. 
+
+The most important resources were related to the use of the icalendar and datetime modules. In the case of datetime, stackoverflow was used frequently to troubleshoot and brainstorm ideas on how to format the scraped schedule into a usable time object. Additionally, the icelandar documentation was referenced for the spesifics of the usage of this module and for creating the specific cases such as recurring events.
+
+As stated earlier, the original plan for this program was to provide a code that would automate the login, leading to the webscraping and calendar output creation process. However, multiple attempts revealed that this part was beyond the scope of this project due to issues related to two-factor-authentication and browser specifications. Thus, the goal was updated to include the remaining steps implemented on a HTML-document saved directly from UniPortal by the user.
+
+Additionally, we a had an optional goal of using LLM integration to create calendar events for important assignment deadlines based on information available at Uniportal. However, this goal was abandoned fairly early on in the project due to time constraints. 
 
 - Use visuals such as drawings, screenshots, or plots to support your explanations
 
 ### 3.2. Results
 
+This project managed to reach most of its goals in a robust manner. The current code succesfully generates a calendar output and for most events, provides the room information. Based on our test cases, the information is also correct, excluding potential overlaps with holiday times. All in all, the project has succesfully created a useful tool for students in University of Luzern that can save time and bring the university systems closer to modern age.
+
+At its current stage, the program has some limitations. Most importantly, the current code only works on the German version of Uniportal, requiring more attentive work by the user. Additionally, the current code relies on a semester lenght of 14 weeks and is not able to detect conflicting events. Thus, user should not fully rely on the output.
+
 - Explain what worked and what did not
-
-    *As the login automation did not work for both of us despite extensive attempts, this part was deemed beyond the scope of this project and inessential for the main goal of the project. Thus, a revision was made to download the course information directly from UniPortal as a HTML document and implement the remaining steps from there.*
-
 - Include relevant data, such as graphs, equations, or images, to illustrate results
 
 ## 4. Conclusion
