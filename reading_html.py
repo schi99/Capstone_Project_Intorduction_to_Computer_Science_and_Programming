@@ -10,7 +10,7 @@ that contains the information of a student's course selection.
 Uniportal provides the course information in a table format.
 
 The beautifulsoup library is used to read the file into a list of tables that is then 
-combined into a nested dictionary for easier future use. This dictionary is 
+combined into a list of dictionaries for easier future use. This list is 
 then stored as a binary object using the pickle module.
 
 Author: Heini Järviö
