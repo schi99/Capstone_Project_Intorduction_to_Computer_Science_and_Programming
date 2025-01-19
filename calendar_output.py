@@ -2,8 +2,7 @@ import icalendar
 import dataclasses
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import parse
-import os
-import pprint
+from pathlib import Path
 from reading_html import load_tables
 import uuid
 
@@ -14,21 +13,11 @@ the calendar event creation. This includes the name of the course and the lesson
 Author: Heini Järviö
 """
 
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+__location__ = Path(__file__).resolve().parent
 
 # Loading the scraped courses
 
-course_info = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
-
-# Using pretty print to verify the data has loaded
-
-# pprint.pprint(course_info)
-
-# Using one of the courses to create a template for parsing the information for calendar output
-course1 = course_info[0]
-
-# Testing that it worked
-# pprint.pprint(course1)
+course_info = load_tables(__location__ / "data/my-tables.pkl")
 
 
 # Using dataclasses to label different elements in the course information
@@ -55,7 +44,7 @@ def create_event(lesson):
     event.add("uid", str(uuid.uuid4()))
     event["location"] = icalendar.vText(lesson.room)
     # Recurring events for weekly courses: a semester lasts 14 weeks
-    if "wöchentlich" or "weekly" in lesson.name.lower():
+    if "wöchentlich" in lesson.name.lower():
         event.add("rrule", icalendar.vRecur(freq="weekly", count=14))
 
     return event
@@ -65,22 +54,34 @@ def create_lessons(name, course_schedule):
     # Creating an empty list for the lessons to loop over
     lessons = []
     """This function turns a course schedule into a list of lessons."""
+
     # Separating the different elements in the schedule into a list
     course_schedule_split = course_schedule.split(sep=",")
-    # Removing blanks to clean the element
+    # Removing blanks from front and end to clean the element
     course_schedule_split = [text.strip() for text in course_schedule_split]
+
+    # Fixing the issue of room and day of the week being combined
+    course_schedule_split_copy = []
+    for i in range(len(course_schedule_split)):
+        # Room/day are every third element, starting from the 4th
+        if i % 3 == 0 and i != 0 and " " in course_schedule_split[i]:
+            # Not all elements have both day and room: if they do, we separate the two
+            room, day_of_week = course_schedule_split[i].rsplit(" ", maxsplit=1)
+            course_schedule_split_copy.append(room)
+            course_schedule_split_copy.append(day_of_week)
+        else:
+            course_schedule_split_copy.append(course_schedule_split[i])
+
+    course_schedule_split = course_schedule_split_copy
+
     # Making a loop to go through the course information list to label different elements
-    # Dividing by 3 as one lesson time consists of 3 elements
-    # (Room and day of the week are combined to two as they were not separated by comma in the data)
-    for i in range(len(course_schedule_split) // 3):
+    # Dividing by 4 as one lesson time consists of 4 elements: day of the week, date, time, room
+
+    for i in range(len(course_schedule_split) // 4):
         # j refers to one 'appointment'
-        j = i * 3
-        room = "unknown"
+        j = i * 4
+        room = course_schedule_split[j + 3]
         day_of_week = course_schedule_split[j]
-        # Not all elements have both day and room: if they do, we separate the two
-        # Room is placed on the first index of one appointment
-        if " " in course_schedule_split[j]:
-            room, day_of_week = course_schedule_split[j].rsplit(" ", maxsplit=1)
         # Date is placed on the second index, parsing the date to a useful format using the parser
         date = parse(course_schedule_split[j + 1], dayfirst=True)
         # Time is placed on the third index; we remove "Uhr" as this is not relevant
@@ -99,7 +100,6 @@ def create_lessons(name, course_schedule):
         )
         # Adding to the list of lessons
         lessons.append(lesson)
-
     return lessons
 
 
@@ -134,9 +134,8 @@ lessons = create_calendar(course_info)
 
 # Saving the calendar file
 def save_calendar(lessons, filename):
-    f = open(os.path.join(filename), "wb")
-    f.write(lessons.to_ical())
-    f.close()
+    with open(filename, "wb") as f:
+        f.write(lessons.to_ical())
 
 
-save_calendar(lessons, os.path.join(__location__, "data/unical.ics"))
+save_calendar(lessons, __location__ / "data/unical.ics")

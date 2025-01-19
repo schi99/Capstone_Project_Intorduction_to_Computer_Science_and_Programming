@@ -1,6 +1,6 @@
 import pandas as pd
 from bs4 import BeautifulSoup
-import os
+from pathlib import Path
 import pickle
 from io import StringIO
 
@@ -18,10 +18,10 @@ Author: Heini Järviö
 """
 
 # Defining the location of the working directory
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+__location__ = Path(__file__).resolve().parent
 
 # File path to the stored html file
-html_file_path = os.path.join(__location__, "data/uniportal.htm")
+html_file_path = __location__ / "data/uniportal.htm"
 
 # A function that is used to create a dictionary of the data.
 # The course information is in a table, so we form a list of the keys and values separately
@@ -87,15 +87,13 @@ if __name__ == "__main__":
     tables = read_html_with_beautiful_soup(html_file_path)
 
     # Defining the file name and location in the data-folder
-    save_tables(os.path.join(__location__, "data/my-tables.pkl"), tables)
+    save_tables(__location__ / "data/my-tables.pkl", tables)
 
-    loaded_tables = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
+    loaded_tables = load_tables(__location__ / "data/my-tables.pkl")
 
     # Displaying the loaded dataframe
     print(loaded_tables)
 
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__))
-    )
-    file_path = os.path.join(__location__, "data/my-tables.pkl")
-    print(os.path.exists(file_path))
+    __location__ = Path(__file__).resolve().parent
+    file_path = __location__, "data/my-tables.pkl"
+#  print(os.path.exists(file_path))
