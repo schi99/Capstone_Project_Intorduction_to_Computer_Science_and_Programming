@@ -58,10 +58,21 @@ Finally, the newly created list of dictionaries was saved using the pickle modul
 
  4. Using the parsed information, creating a .ics file of the course timetable (spesific file: calendar_output.py)
 
+ For the final step in the project, date and calendar related modules as well as the dataclasses module were used. To successfully create a calendar file, three functions were necessary. 
+
+To create the planned calendar output, it was necessary to identify four elements for each class of each course: the date, start time, end time and the room. Additionally, each calendar event should include the name of the course. For easier sorting, we used the dataclasses module to identify these elements in one course.
+
+The implementation has three key functions: 1. creating the separate course events from one course, 2. creating an icalendar compatible object of the course events and 3. lastly, to combine all events to one calendar. In 1. we looped over all events of one course. In 2. the the events were formated using the icalendar module to comply with the .ics file requirements and in 3. we looped over all courses and applied the earlier steps to form a complete calendar. 
+
+Identifying the different time elements and the room from the course schedule posed greatest challenges. This was because this information was all given on set of rows with differing separators (e.g. "Tue, 4.12., 8.00-16.00, B3.456"). Splitting with commas to separate elements (day of week, date, time, room) led to suitable results for the date and time information, but problems arose for identifying the room number, as this was separated from the next line only with a blank. For this reason, the current solution does not add room number for the first event of a course. Starting and ending time for one event were created by splitting the said element and transformed using the datetime module, combined with the date. Lastly, all information was organised using the dataclasses. 
+
+Additional challenge came from courses that would occur weekly, with only one announced course time (from a specific date). For these courses we needed to remove the "ab" or "from" from the schedule and establish a recurrence. A proximal solution was found by repeating the event 14 times, as this is the length of a semester in Switzerland. This solution was seen as sufficient although not entirely accurate, as it may ran into conflict with holidays. Finally, the compelete calendar was saved as .ics file and main.py was created to combine all necessary functions to one file for easier use. 
+
+
 - Describe your methodology and problem-solving strategies
 - Clearly state what you developed and how (implementation)
 
-Beautifulsoup package was used to parse this data into a meaningful dataframe. The parser makes a list of the data that was then modified to a dictionary object, as this was deemed more useful for the next steps of the project.
+
 
 ### 3.1. Design details
 
@@ -92,3 +103,6 @@ Beautifulsoup package was used to parse this data into a meaningful dataframe. T
 
 https://www.selenium.dev/documentation/
 https://github.com/mozilla/geckodriver 
+https://icalendar.readthedocs.io/en/latest/usage.html
+https://github.com/collective/icalendar
+https://icalendar.org/
