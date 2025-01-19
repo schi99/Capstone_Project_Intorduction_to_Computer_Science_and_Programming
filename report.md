@@ -24,7 +24,7 @@ While there are some tutorials and examples online on how to turn a scraped info
 
 ## 3. Project
 
-To start, the project was split to four sub-tasks:
+The initial plan for the project consisted of four sub-tasks:
  1. Automating the login to Uniportal using Selenium
  2. Scraping the course information from Uniportal and saving it as a HTML file
  3. Parsing the scraped information to a more usable form
@@ -38,7 +38,7 @@ To start, the project was split to four sub-tasks:
 
  For this step we used a Selenium driver combined with stored user credentials. The driver would open Uniportal link in a new window, and would be directed to the Switch edu-ID login. The login involves choosing the right university and sending the user creadentials to the correct fields, which were identified using the XPATH notation. The Switch edu-ID uses two-factor-authentication. Surprisingly, one of us was available to skip the autenticator code -step of the login process while the other one was not. While requiring a two-factor-login this feature was deemed quite impractical, as the user would have to provide authenticator code each time they wanted to use the feature, which would make the automation pointless.
 
-To go around this issue,  we also attempted to create a Selenium browser automation that could access a pre-existing browser window, where user had already completed the log-in process to UniPortal and subsequently automate the remaining steps. The reasoning for this step was that accessing an existing window would utilise saved cookies, therefore avoiding the problem of the two-factor authentication. The process involved use the browser's (Firefox) profiles-functionality and installation of the geckodriver. However, this attempt, too, was unsuccesful. The github repository includes a python file that shows an attempt at this.
+To go around this issue,  we also attempted to create a Selenium browser automation that could access a pre-existing browser window, where user had already completed the log-in process to UniPortal and subsequently automate the remaining steps. The reasoning for this step was that accessing an existing window would utilise saved cookies, therefore avoiding the problem of the two-factor authentication. The process involved use the browser's profiles-functionality and installation of the geckodriver. However, this attempt, too, was unsuccesful. The github repository includes a python file that shows an attempt at this.
 
  2. Scraping the course information from Uniportal and saving it as a HTML file
 
@@ -46,12 +46,33 @@ To go around this issue,  we also attempted to create a Selenium browser automat
 
  3. Parsing the scraped information to a more usable form (spesific file: reading_html.py)
 
+ The uniportal page gives the course information in a table format, with one table for one course. Typically, the tables have two columns and several rows, and the first column has the "title" of the information (e.g. Course code, content) that standardised for all courses and the second lists the details for said title. 
+
+To read and parse the information from the html file, the pandas and beautiful soup libraries were used. First, we used the html parser from beautifulsoup to parse the data and then identified all the tables (courses). The tables were converted to a string and then, using the pandas library, read to a list of tables. 
+
+To better usability, we wanted to store the data as a list of dictionaries. This would allow accessing specific rows by naming the key (e.g. "Termine" or "Events") and one course at a time. This was done by creating a table_to_dict function, that reads and element on the first index of a table to a list of list of keys and on the second index to a list of values. These key and value lists were then "zipped" together to create a dictionary.
+
+During this process we noticed an error occuring for some of the courses. This error was traced back to the structure of the data; some rows in the course information tables had a table in them. As this occured in rows that were not relevant for the project, a function was added to identify and add only those tables with two columns. 
+
+Finally, the newly created list of dictionaries was saved using the pickle module of python. This allowed us to access the information later while ensuring the same format. 
+
  4. Using the parsed information, creating a .ics file of the course timetable (spesific file: calendar_output.py)
+
+ For the final step in the project, date and calendar related modules as well as the dataclasses module were used. To successfully create a calendar file, three functions were necessary. 
+
+To create the planned calendar output, it was necessary to identify four elements for each class of each course: the date, start time, end time and the room. Additionally, each calendar event should include the name of the course. For easier sorting, we used the dataclasses module to identify these elements in one course.
+
+The implementation has three key functions: 1. creating the separate course events from one course, 2. creating an icalendar compatible object of the course events and 3. lastly, to combine all events to one calendar. In 1. we looped over all events of one course. In 2. the the events were formated using the icalendar module to comply with the .ics file requirements and in 3. we looped over all courses and applied the earlier steps to form a complete calendar. 
+
+Identifying the different time elements and the room from the course schedule posed greatest challenges. This was because this information was all given on set of rows with differing separators (e.g. "Tue, 4.12., 8.00-16.00, B3.456"). Splitting with commas to separate elements (day of week, date, time, room) led to suitable results for the date and time information, but problems arose for identifying the room number, as this was separated from the next line only with a blank. For this reason, the current solution does not add room number for the first event of a course. Starting and ending time for one event were created by splitting the said element and transformed using the datetime module, combined with the date. Lastly, all information was organised using the dataclasses. 
+
+Additional challenge came from courses that would occur weekly, with only one announced course time (from a specific date). For these courses we needed to remove the "ab" or "from" from the schedule and establish a recurrence. A proximal solution was found by repeating the event 14 times, as this is the length of a semester in Switzerland. This solution was seen as sufficient although not entirely accurate, as it may ran into conflict with holidays. Finally, the compelete calendar was saved as .ics file and main.py was created to combine all necessary functions to one file for easier use. 
+
 
 - Describe your methodology and problem-solving strategies
 - Clearly state what you developed and how (implementation)
 
-Beautifulsoup package was used to parse this data into a meaningful dataframe. The parser makes a list of the data that was then modified to a dictionary object, as this was deemed more useful for the next steps of the project.
+
 
 ### 3.1. Design details
 
@@ -82,3 +103,6 @@ Beautifulsoup package was used to parse this data into a meaningful dataframe. T
 
 https://www.selenium.dev/documentation/
 https://github.com/mozilla/geckodriver 
+https://icalendar.readthedocs.io/en/latest/usage.html
+https://github.com/collective/icalendar
+https://icalendar.org/

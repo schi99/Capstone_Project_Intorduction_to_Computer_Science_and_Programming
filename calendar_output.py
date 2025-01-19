@@ -55,7 +55,7 @@ def create_event(lesson):
     event.add("uid", str(uuid.uuid4()))
     event["location"] = icalendar.vText(lesson.room)
     # Recurring events for weekly courses: a semester lasts 14 weeks
-    if "wöchentlich" in lesson.name.lower():
+    if "wöchentlich" or "weekly" in lesson.name.lower():
         event.add("rrule", icalendar.vRecur(freq="weekly", count=14))
 
     return event
@@ -129,7 +129,6 @@ def create_calendar(course_info):
 
 lessons = create_calendar(course_info)
 # Test on one of the cases that all events were created
-# assert len(lessons.events) == 4
 # print(lessons)
 
 

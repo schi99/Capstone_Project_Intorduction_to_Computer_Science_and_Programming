@@ -5,12 +5,12 @@ import pickle
 from io import StringIO
 
 """
-This code reads the previously stored "scraped_page" html-file 
-that contains the information of a student's course selection. This file contains the necessary information
-in a set of tables, where one table contains the information from one course.
+This code reads the previously stored "uniportal" html-file 
+that contains the information of a student's course selection. 
+Uniportal provides the course information in a table format.
 
-The beautifulsoup library is used to read the file into a list that is then 
-combined into a dictionary object for easier future use. This dictionary is 
+The beautifulsoup library is used to read the file into a list of tables that is then 
+combined into a list of dictionaries for easier future use. This list is 
 then stored as a binary object using the pickle module.
 
 Author: Heini Järviö
@@ -23,8 +23,9 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 # File path to the stored html file
 html_file_path = os.path.join(__location__, "data/uniportal.htm")
 
-# A function that is used to create a dictionary of a table in the data by combining
-# the information from first index of the list with information from the second index
+# A function that is used to create a dictionary of the data.
+# The course information is in a table, so we form a list of the keys and values separately
+# Lastly, we combine the lists into a dictionary
 
 
 def table_to_dict(table):
@@ -34,7 +35,7 @@ def table_to_dict(table):
     return dictionary
 
 
-# A function to parse data from the stored html file
+# Parsing the data from the stored html file
 
 
 def read_html_with_beautiful_soup(file_path):
@@ -52,7 +53,7 @@ def read_html_with_beautiful_soup(file_path):
 
     # df.shape gives us the number of [rows, columns] in the dataframe.
     # We check all of the dataframes in dfs and only keep the ones that
-    # have columns == 2.
+    # have columns == 2 (some had a table inside a table).
     dfs_with_two_cols = []
     for df in dfs:
         if df.shape[1] == 2:
@@ -67,7 +68,7 @@ def read_html_with_beautiful_soup(file_path):
     return dicts
 
 
-# Saving our dictionary of tables using pickle
+# Saving our dictionary of tables using the pickle module
 def save_tables(filename, tables):
     with open(filename, "wb") as file:
         pickle.dump(tables, file)
