@@ -2,8 +2,7 @@ import icalendar
 import dataclasses
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import parse
-import os
-import pprint
+from pathlib import Path
 from reading_html import load_tables
 import uuid
 
@@ -14,21 +13,11 @@ the calendar event creation. This includes the name of the course and the lesson
 Author: Heini Järviö
 """
 
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+__location__ = Path(__file__).resolve().parent
 
 # Loading the scraped courses
 
-course_info = load_tables(os.path.join(__location__, "data/my-tables.pkl"))
-
-# Using pretty print to verify the data has loaded
-
-# pprint.pprint(course_info)
-
-# Using one of the courses to create a template for parsing the information for calendar output
-course1 = course_info[0]
-
-# Testing that it worked
-# pprint.pprint(course1)
+course_info = load_tables(__location__ / "data/my-tables.pkl")
 
 
 # Using dataclasses to label different elements in the course information
@@ -145,9 +134,8 @@ lessons = create_calendar(course_info)
 
 # Saving the calendar file
 def save_calendar(lessons, filename):
-    f = open(os.path.join(filename), "wb")
-    f.write(lessons.to_ical())
-    f.close()
+    with open(filename, "wb") as f:
+        f.write(lessons.to_ical())
 
 
-save_calendar(lessons, os.path.join(__location__, "data/unical.ics"))
+save_calendar(lessons, __location__ / "data/unical.ics")
